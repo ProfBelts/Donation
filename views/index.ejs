@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="/css/style.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+        <script>
+            $(document).ready(function () {
+                const socket = io();
+
+                $(".donate").click(() => {
+                    socket.emit("donate");
+                });
+
+                $(".redeem").click(() => {
+                    socket.emit("redeem");
+                });
+
+                // Cash updated keeps track the current cash. If the cash is 0 it should not be able to redeem.
+                socket.on("cashUpdated", (cash) => {
+                    $("h1").text("Total Cash Donation: $" + cash);
+                    // Disable redeem button if cash is zero or less
+                    if (cash <= 0) {
+                        $(".redeem").prop("disabled", true);
+                    } else {
+                        $(".redeem").prop("disabled", false);
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Total Cash Donation: $<%= cash %></h1>
+        <p>Give according to one's capacity. Take according to one's need.</p>
+
+        <div class="buttons">
+            <button class="donate">Donate $10</button>
+            <button class="redeem">Redeem $10</button>
+        </div>
+    </body>
+</html>
